@@ -31,7 +31,7 @@ SECRET_KEY = '%a=6#0bs*($q%v_w^+!+y*(%zz4e4k(6gim4#1f2yno6focot='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -84,7 +84,7 @@ DATABASES = {
         'HOST': '127.0.0.1',  # 数据库主机
         'PORT': 3306,  # 数据库端口
         'USER': 'root',  # 数据库用户名
-        'PASSWORD': 'root',  # 数据库用户密码
+        'PASSWORD': 'mysql',  # 数据库用户密码
         'NAME': 'demo1'  # 数据库名字
     },
 }
