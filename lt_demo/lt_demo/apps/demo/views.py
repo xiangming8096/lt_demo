@@ -1,14 +1,20 @@
+import datetime
 import json
 import re
 
+from django.db.models import Count
 from django.views import View
 from django.http import JsonResponse
 from django.core.cache import cache
 
+from celery_tasks.email.tasks import send_verift_email
 from demo.models import Area, UserInfo
 
 
 # 省级数据
+from settings.dev import EMAIL_ADDRESS
+
+
 class ProvinceAreasView(View):
     def get(self, request):
 
@@ -91,3 +97,20 @@ class InsertView(View):
             return JsonResponse({'code': 400, 'errmsg': '保存到数据库失败'})
 
         return JsonResponse({'code': 0, 'errmsg': f'{userinfo.name}：信息保存成功，时间：{userinfo.create_time}'})
+
+
+# 查询数据
+
+
+# 定时任务
+def send_task_email():
+    try:
+        userinfo_list = UserInfo.objects.filter(create_time__gte=datetime.datetime.now().date()).values('temp').annotate(Count('name'))
+
+    except Exception as e:
+        return JsonResponse({'code': 400, 'errmsg': '数据库查询失败'})
+    # 构建数据
+    data_dict = {temp: name_count for temp, name_count in userinfo_list}
+
+    # 发送邮件
+    send_verift_email(EMAIL_ADDRESS, data_dict)
